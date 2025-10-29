@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
-import { updatePoints, getPoints } from '../utils/stats';
+// 포인트 시스템 비활성화로 포인트 관련 함수는 사용하지 않습니다.
 
 // 명령어 정의
 export const data = new SlashCommandBuilder()
@@ -20,56 +20,28 @@ export const data = new SlashCommandBuilder()
                 { name: '뒷면', value: 'tails' }
             )
     )
-    .addIntegerOption(option =>
-        option
-            .setName('amount')
-            .setNameLocalizations({ ko: '금액' })
-            .setDescription('Amount of points to bet')
-            .setDescriptionLocalizations({ ko: '베팅할 포인트 금액' })
-            .setRequired(true)
-            .setMinValue(1)
-    );
+    ;
 
 /**
  * coinflip 명령어 실행
  */
 export async function execute(interaction: ChatInputCommandInteraction) {
-    const userId = interaction.user.id;
     const choice = interaction.options.getString('choice', true);
-    const amount = interaction.options.getInteger('amount', true);
-    
-    const currentPoints = getPoints(userId);
-    
-    if (currentPoints < amount) {
-        await interaction.reply({
-            content: `❌ 포인트가 부족합니다! (필요: ${amount}P, 보유: ${currentPoints}P)`,
-            ephemeral: true
-        });
-        return;
-    }
-    
+
     // 동전 던지기
     const result = Math.random() < 0.5 ? 'heads' : 'tails';
     const resultKorean = result === 'heads' ? '앞면' : '뒷면';
     const choiceKorean = choice === 'heads' ? '앞면' : '뒷면';
-    
+
     let content = `🪙 **동전 던지기**\n\n`;
     content += `당신의 선택: **${choiceKorean}**\n`;
     content += `결과: **${resultKorean}**\n\n`;
-    
+
     if (choice === result) {
-        // 승리
-        updatePoints(userId, amount);
-        content += `🎉 승리!\n`;
-        content += `획득: **+${amount * 2}P** (베팅 반환 + 상금)\n`;
-        content += `\n현재 포인트: **${currentPoints + amount}P**`;
+        content += `🎉 승리! (포인트 시스템이 비활성화되어 포인트는 부여되지 않습니다.)`;
     } else {
-        // 패배
-        updatePoints(userId, -amount);
-        content += `😢 패배!\n`;
-        content += `손실: **-${amount}P**\n`;
-        content += `\n현재 포인트: **${currentPoints - amount}P**`;
+        content += `😢 패배! (포인트 시스템이 비활성화되어 포인트는 차감되지 않습니다.)`;
     }
-    
+
     await interaction.reply(content);
 }

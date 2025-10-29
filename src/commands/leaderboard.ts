@@ -23,7 +23,6 @@ export const data = new SlashCommandBuilder()
                 { name: '끝말잇기', value: 'wordrelay' },
                 { name: '초성퀴즈', value: 'quiz' },
                 { name: '타자배틀', value: 'typing' },
-                { name: '포인트', value: 'points' },
                 { name: '낚시도감', value: 'fishing' }
             )
     );
@@ -33,11 +32,11 @@ export const data = new SlashCommandBuilder()
  */
 export async function execute(interaction: ChatInputCommandInteraction) {
     const game = interaction.options.getString('game', true);
-    
+
     let title = '';
     let field = '';
     let description = '';
-    
+
     switch (game) {
         case 'rps':
             title = '🎮 가위바위보 순위표';
@@ -74,11 +73,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             field = 'wins';
             description = '승리 횟수 기준';
             break;
-        case 'points':
-            title = '💰 포인트 순위표';
-            field = 'points';
-            description = '보유 포인트 기준';
-            break;
+        // 'points' 순위표는 포인트 시스템 비활성화로 제거됨
         case 'fishing':
             const stats = readStats();
             const fishingLeaderboard = Object.entries(stats)
@@ -89,13 +84,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                 }))
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 10);
-            
+
             const fishingEmbed = new EmbedBuilder()
                 .setTitle('🎣 낚시도감 순위표')
                 .setDescription('수집한 물고기 수 기준')
                 .setColor(0x3498db)
                 .setTimestamp();
-            
+
             if (fishingLeaderboard.length === 0) {
                 fishingEmbed.addFields({ name: '순위', value: '아직 기록이 없습니다.' });
             } else {
@@ -104,11 +99,11 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                     .join('\n');
                 fishingEmbed.addFields({ name: '🏆 Top 10', value: rankText });
             }
-            
+
             await interaction.reply({ embeds: [fishingEmbed] });
             return;
     }
-    
+
     // 포인트 순위표는 별도 처리
     if (game === 'points') {
         const stats = readStats();
@@ -120,13 +115,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             }))
             .sort((a, b) => b.value - a.value)
             .slice(0, 10);
-        
+
         const pointsEmbed = new EmbedBuilder()
             .setTitle(title)
             .setDescription(description)
             .setColor(0xf1c40f)
             .setTimestamp();
-        
+
         if (pointsLeaderboard.length === 0) {
             pointsEmbed.addFields({ name: '순위', value: '아직 기록이 없습니다.' });
         } else {
@@ -135,20 +130,20 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                 .join('\n');
             pointsEmbed.addFields({ name: '🏆 Top 10', value: rankText });
         }
-        
+
         await interaction.reply({ embeds: [pointsEmbed] });
         return;
     }
-    
+
     // 일반 게임 순위표
     const leaderboard = getLeaderboard(game, field, 10);
-    
+
     const embed = new EmbedBuilder()
         .setTitle(title)
         .setDescription(description)
         .setColor(0x3498db)
         .setTimestamp();
-    
+
     if (leaderboard.length === 0) {
         embed.addFields({ name: '순위', value: '아직 기록이 없습니다.' });
     } else {
@@ -157,6 +152,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .join('\n');
         embed.addFields({ name: '🏆 Top 10', value: rankText });
     }
-    
+
     await interaction.reply({ embeds: [embed] });
 }

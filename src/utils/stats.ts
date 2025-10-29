@@ -53,15 +53,15 @@ export function writeStats(stats: GameStats): void {
  */
 export function updateStat(userId: string, game: string, updates: any): void {
     const stats = readStats();
-    
+
     if (!stats[userId]) {
         stats[userId] = {};
     }
-    
+
     if (!stats[userId][game]) {
         stats[userId][game] = {};
     }
-    
+
     // 업데이트 적용
     for (const key in updates) {
         if (typeof updates[key] === 'number') {
@@ -70,7 +70,7 @@ export function updateStat(userId: string, game: string, updates: any): void {
             stats[userId][game][key] = updates[key];
         }
     }
-    
+
     writeStats(stats);
 }
 
@@ -78,23 +78,17 @@ export function updateStat(userId: string, game: string, updates: any): void {
  * 포인트 업데이트
  */
 export function updatePoints(userId: string, amount: number): void {
-    const stats = readStats();
-    
-    if (!stats[userId]) {
-        stats[userId] = {};
-    }
-    
-    stats[userId].points = (stats[userId].points || 0) + amount;
-    
-    writeStats(stats);
+    // 포인트 시스템 비활성화: 더 이상 포인트를 변경하지 않습니다.
+    // 이전에 저장된 포인트 값을 유지하거나 완전히 제거하려면 별도 스크립트로 처리하세요.
+    return;
 }
 
 /**
  * 포인트 조회
  */
 export function getPoints(userId: string): number {
-    const stats = readStats();
-    return stats[userId]?.points || 0;
+    // 포인트 시스템 비활성화: 항상 0을 반환합니다.
+    return 0;
 }
 
 /**
@@ -102,21 +96,21 @@ export function getPoints(userId: string): number {
  */
 export function addFishingItem(userId: string, fish: string, rarity: string): void {
     const stats = readStats();
-    
+
     if (!stats[userId]) {
         stats[userId] = {};
     }
-    
+
     if (!stats[userId].fishing_inventory) {
         stats[userId].fishing_inventory = [];
     }
-    
+
     stats[userId].fishing_inventory.push({
         fish,
         rarity,
         timestamp: Date.now()
     });
-    
+
     writeStats(stats);
 }
 
@@ -126,7 +120,7 @@ export function addFishingItem(userId: string, fish: string, rarity: string): vo
 export function getLeaderboard(game: string, field: string, limit: number = 10): Array<{ userId: string; value: number }> {
     const stats = readStats();
     const leaderboard: Array<{ userId: string; value: number }> = [];
-    
+
     for (const userId in stats) {
         if (stats[userId][game] && typeof stats[userId][game][field] === 'number') {
             leaderboard.push({
@@ -135,7 +129,7 @@ export function getLeaderboard(game: string, field: string, limit: number = 10):
             });
         }
     }
-    
+
     return leaderboard
         .sort((a, b) => b.value - a.value)
         .slice(0, limit);
