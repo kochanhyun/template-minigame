@@ -36,6 +36,29 @@
 #### 기타
 - **순위표** (`/leaderboard`): 게임별 Top 10 순위 확인
 
+### 게임 기능 상세
+
+#### 상태 관리 시스템
+- **휘발성 상태 (메모리)**: 
+  - 현재 진행 중인 게임 데이터를 `Map` 객체로 관리
+  - 봇 재시작 시 초기화됨
+  - 예: 틱택토 보드 상태, 블랙잭 카드 패, 퀴즈 정답
+
+- **영구 상태 (JSON)**:
+  - `game_stats.json`에 유저별 통계 저장
+  - 승리/패배 횟수, 포인트, 수집 아이템 등
+  - 봇 재시작 후에도 유지됨
+
+#### 한국어 지원
+- 모든 명령어는 Discord.js의 `setNameLocalizations`를 사용하여 한국어 이름 제공
+- 사용자에게 보이는 모든 메시지, 버튼, 임베드는 한국어로 작성됨
+- 슬래시 커맨드는 영어 이름과 한국어 이름 모두 지원
+
+#### 인터랙션 방식
+- **버튼 기반**: 가위바위보, 틱택토, 블랙잭
+- **채팅 기반**: 초성퀴즈, 타자배틀 (MessageContent Intent 필요)
+- **명령어 기반**: 끝말잇기, 숫자야구, 슬롯머신 등
+
 ## 요구사항
 - Node.js 18 이상 권장
 - npm
@@ -46,7 +69,7 @@
 
 ```bash
 git clone <your-repo-url>
-cd template-djs-boilerplate
+cd template-minigame
 ```
 
 2. 의존성 설치
@@ -64,6 +87,8 @@ DISCORD_TOKEN=your_bot_token
 DISCORD_CLIENT_ID=your_client_id
 ```
 
+> `.env.example` 파일을 참고하세요.
+
 4. 개발 모드로 실행
 
 ```bash
@@ -76,6 +101,20 @@ npm run dev
 npm run build
 npm start
 ```
+
+> **중요**: 봇이 채팅 메시지를 읽으려면 Discord Developer Portal에서 **Message Content Intent**를 활성화해야 합니다.
+
+### Discord Bot 설정
+
+1. [Discord Developer Portal](https://discord.com/developers/applications)에서 애플리케이션 생성
+2. Bot 페이지에서:
+   - Reset Token을 클릭하여 토큰 생성 (`.env`의 `DISCORD_TOKEN`)
+   - **MESSAGE CONTENT INTENT** 활성화 (필수!)
+   - **SERVER MEMBERS INTENT** 활성화 (권장)
+3. OAuth2 페이지에서 봇 초대 URL 생성:
+   - `bot` 및 `applications.commands` 스코프 선택
+   - 필요한 권한 선택 (Send Messages, Embed Links, Use External Emojis 등)
+4. General Information 페이지에서 Application ID 복사 (`.env`의 `DISCORD_CLIENT_ID`)
 
 > package.json에 정의된 스크립트:
 
