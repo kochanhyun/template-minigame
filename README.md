@@ -109,8 +109,8 @@ npm start
 1. [Discord Developer Portal](https://discord.com/developers/applications)에서 애플리케이션 생성
 2. Bot 페이지에서:
    - Reset Token을 클릭하여 토큰 생성 (`.env`의 `DISCORD_TOKEN`)
-   - **MESSAGE CONTENT INTENT** 활성화 (필수!)
-   - **SERVER MEMBERS INTENT** 활성화 (권장)
+   - **MESSAGE CONTENT INTENT** 활성화 (필수! 초성퀴즈, 타자배틀 등 채팅 기반 게임에 필요)
+   - **SERVER MEMBERS INTENT** 활성화 (권장: 유저 정보 조회 및 멘션 기능에 사용)
 3. OAuth2 페이지에서 봇 초대 URL 생성:
    - `bot` 및 `applications.commands` 스코프 선택
    - 필요한 권한 선택 (Send Messages, Embed Links, Use External Emojis 등)
