@@ -4,3 +4,4 @@
 /prisma/migrations
 .DS_Store
 *.tar
+game_stats.json
