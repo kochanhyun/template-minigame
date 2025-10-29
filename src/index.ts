@@ -9,7 +9,7 @@ import { handleMessageCreate } from "./events/messageCreate";
 
 // 클라이언트 생성
 const client = new Client({
-    intents: ["Guilds", "GuildMessages", "DirectMessages", "GuildMembers", "GuildVoiceStates"],
+    intents: ["Guilds", "GuildMessages", "MessageContent", "DirectMessages", "GuildMembers", "GuildVoiceStates"],
 });
 
 // 봇이 준비되었을 때의 이벤트 핸들러

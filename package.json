@@ -1,7 +1,7 @@
 {
-  "name": "discord-js-typescript-boilerplate",
-  "version": "0.0.1",
-  "description": "A simple boilerplate for creating Discord bots with TypeScript",
+  "name": "template-minigame",
+  "version": "1.0.0",
+  "description": "Comprehensive Discord.js minigame bot template with TypeScript",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

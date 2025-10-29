@@ -1,13 +1,63 @@
-# Discord.js TypeScript Boilerplate
+# Discord.js 종합 미니게임 봇 템플릿
 
-이 리포지토리는 Discord.js(v14)와 TypeScript로 만든 간단한 봇 템플릿입니다. 빠르게 봇을 시작하고 커맨드/이벤트 구조를 따르기 쉽게 구성되어 있습니다.
+이 리포지토리는 Discord.js(v14)와 TypeScript로 만든 종합 미니게임 봇 템플릿입니다. 다양한 미니게임(1:1, 채널 전체, 수집형)이 번들로 제공되며, 실시간 게임 상태와 영구 통계를 효율적으로 관리합니다.
 
 ## 주요 기능
-- TypeScript 기반 구조
-- 명령어(commands)와 이벤트(events) 분리
-- 슬래시 커맨드 배포 스크립트(`src/deploy-commands.ts`)
-- 간단한 스케줄러 예시(`src/scheduler.ts`)
-- 환경 변수(.env) 사용 (`dotenv`)
+
+### 기술 스택
+- **언어**: Node.js + TypeScript
+- **라이브러리**: Discord.js v14
+- **로컬라이제이션**: Discord.js 내장 함수 (setNameLocalization) 사용
+- **상태 관리**:
+  - 메모리 (RAM): `Map` 객체로 현재 진행 중인 게임 상태 관리
+  - 영구 저장소: `game_stats.json` 파일로 통계 및 수집품 저장
+
+### 게임 목록
+
+#### 1:1 빠른 게임 (vs. 봇/유저)
+- **가위바위보** (`/rps`): 버튼으로 봇과 대결
+- **틱택토** (`/tic-tac-toe`): 3x3 버튼으로 봇 또는 유저와 대결
+- **블랙잭** (`/blackjack`): 히트/스탠드 버튼으로 봇과 카드 게임
+- **숫자야구** (`/number-baseball`, `/guess`): 3자리 숫자 맞추기
+
+#### 채널 전체 참여 게임
+- **끝말잇기** (`/word-relay`): 채널에서 끝말잇기 게임
+- **초성퀴즈** (`/quiz`): 채팅으로 초성 힌트를 보고 정답 맞추기
+- **타자배틀** (`/typing`): 주어진 문장을 가장 빨리 입력하기
+
+#### 포인트/도박 게임
+- **슬롯머신** (`/slots`): 3개의 랜덤 이모지로 포인트 획득
+- **동전던지기** (`/coinflip`): 앞면/뒷면을 선택하여 포인트 베팅
+
+#### 수집/성장형 게임
+- **낚시** (`/fishing`): 쿨타임 30분, 랜덤 물고기 수집
+- **도감** (`/collection`): 수집한 물고기 목록 확인
+
+#### 기타
+- **순위표** (`/leaderboard`): 게임별 Top 10 순위 확인
+
+### 게임 기능 상세
+
+#### 상태 관리 시스템
+- **휘발성 상태 (메모리)**: 
+  - 현재 진행 중인 게임 데이터를 `Map` 객체로 관리
+  - 봇 재시작 시 초기화됨
+  - 예: 틱택토 보드 상태, 블랙잭 카드 패, 퀴즈 정답
+
+- **영구 상태 (JSON)**:
+  - `game_stats.json`에 유저별 통계 저장
+  - 승리/패배 횟수, 포인트, 수집 아이템 등
+  - 봇 재시작 후에도 유지됨
+
+#### 한국어 지원
+- 모든 명령어는 Discord.js의 `setNameLocalizations`를 사용하여 한국어 이름 제공
+- 사용자에게 보이는 모든 메시지, 버튼, 임베드는 한국어로 작성됨
+- 슬래시 커맨드는 영어 이름과 한국어 이름 모두 지원
+
+#### 인터랙션 방식
+- **버튼 기반**: 가위바위보, 틱택토, 블랙잭
+- **채팅 기반**: 초성퀴즈, 타자배틀 (MessageContent Intent 필요)
+- **명령어 기반**: 끝말잇기, 숫자야구, 슬롯머신 등
 
 ## 요구사항
 - Node.js 18 이상 권장
@@ -19,7 +69,7 @@
 
 ```bash
 git clone <your-repo-url>
-cd template-djs-boilerplate
+cd template-minigame
 ```
 
 2. 의존성 설치
@@ -37,6 +87,8 @@ DISCORD_TOKEN=your_bot_token
 DISCORD_CLIENT_ID=your_client_id
 ```
 
+> `.env.example` 파일을 참고하세요.
+
 4. 개발 모드로 실행
 
 ```bash
@@ -49,6 +101,20 @@ npm run dev
 npm run build
 npm start
 ```
+
+> **중요**: 봇이 채팅 메시지를 읽으려면 Discord Developer Portal에서 **Message Content Intent**를 활성화해야 합니다.
+
+### Discord Bot 설정
+
+1. [Discord Developer Portal](https://discord.com/developers/applications)에서 애플리케이션 생성
+2. Bot 페이지에서:
+   - Reset Token을 클릭하여 토큰 생성 (`.env`의 `DISCORD_TOKEN`)
+   - **MESSAGE CONTENT INTENT** 활성화 (필수! 초성퀴즈, 타자배틀 등 채팅 기반 게임에 필요)
+   - **SERVER MEMBERS INTENT** 활성화 (권장: 유저 정보 조회 및 멘션 기능에 사용)
+3. OAuth2 페이지에서 봇 초대 URL 생성:
+   - `bot` 및 `applications.commands` 스코프 선택
+   - 필요한 권한 선택 (Send Messages, Embed Links, Use External Emojis 등)
+4. General Information 페이지에서 Application ID 복사 (`.env`의 `DISCORD_CLIENT_ID`)
 
 > package.json에 정의된 스크립트:
 
@@ -68,18 +134,32 @@ npm start
 
 ```
 src/
-  config.ts           # dotenv 로 환경변수 로드 및 검증
-  deploy-commands.ts  # 슬래시 커맨드(등록) 스크립트 예시
-  index.ts            # 엔트리 포인트
-  scheduler.ts        # 스케줄 예시
-  commands/           # 커맨드 정의 폴더
-    ping.ts
-    index.ts          # 커맨드 로더
-  events/             # 이벤트 핸들러
-    messageCreate.ts
+  config.ts              # 환경변수 로드 및 검증
+  deploy-commands.ts     # 슬래시 커맨드 등록 스크립트
+  index.ts               # 엔트리 포인트
+  scheduler.ts           # 스케줄러 예시
+  gameState.ts           # 게임 상태 관리 (메모리)
+  commands/              # 커맨드 정의 폴더
+    leaderboard.ts       # 순위표
+    rps.ts               # 가위바위보
+    tic-tac-toe.ts       # 틱택토
+    blackjack.ts         # 블랙잭
+    number-baseball.ts   # 숫자야구
+    guess.ts             # 숫자 추측
+    word-relay.ts        # 끝말잇기
+    quiz.ts              # 초성퀴즈
+    typing.ts            # 타자배틀
+    slots.ts             # 슬롯머신
+    coinflip.ts          # 동전던지기
+    fishing.ts           # 낚시
+    collection.ts        # 도감
+    index.ts             # 커맨드 로더
+  events/                # 이벤트 핸들러
+    messageCreate.ts     # 채팅 기반 게임 처리
+  utils/                 # 유틸리티
+    stats.ts             # 통계 관리 (JSON)
+game_stats.json          # 영구 통계 저장소 (자동 생성)
 ```
-
-새 커맨드나 이벤트를 추가할 때는 기존 구조를 참고해 `commands`/`events`에 파일을 추가하면 됩니다.
 
 ## 슬래시 커맨드 배포
 
@@ -100,8 +180,23 @@ node dist/deploy-commands.js
 
 ## 명령어·이벤트 추가 가이드
 
-1. `src/commands` 폴더에 새 커맨드 파일을 추가합니다. 기존 `ping.ts`를 참고하세요.
-2. `src/commands/index.ts`에서 새 커맨드를 내보내도록 추가합니다.
+1. `src/commands` 폴더에 새 커맨드 파일을 추가합니다.
+2. `src/commands/index.ts`에서 새 커맨드를 import하고 export합니다.
+3. 모든 명령어는 `setNameLocalizations({ ko: '한국어이름' })`을 사용해야 합니다.
+4. 게임 상태는 `src/gameState.ts`의 Map 객체를 사용합니다.
+5. 영구 통계는 `src/utils/stats.ts`의 함수를 사용합니다.
+
+### 상태 관리 가이드
+
+**메모리 (휘발성 - 봇 재시작 시 사라짐)**
+- `src/gameState.ts`의 Map 객체 사용
+- 현재 진행 중인 게임 상태 저장
+- 예: 틱택토 보드 상태, 블랙잭 카드 패
+
+**영구 저장소 (game_stats.json)**
+- `src/utils/stats.ts`의 함수 사용
+- 유저 승수, 포인트, 수집품 저장
+- 리더보드 데이터 조회
 
 ## 출처(Attribution)
 
