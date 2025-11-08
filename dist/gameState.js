@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fishingCooldowns = exports.typingRace = exports.channelQuiz = exports.channelWordRelay = exports.activeNumberBaseball = exports.activeBlackjack = exports.activeTicTacToe = void 0;
+exports.activeTicTacToe = new Map();
+exports.activeBlackjack = new Map();
+exports.activeNumberBaseball = new Map();
+exports.channelWordRelay = new Map();
+exports.channelQuiz = new Map();
+exports.typingRace = new Map();
+exports.fishingCooldowns = new Map();
